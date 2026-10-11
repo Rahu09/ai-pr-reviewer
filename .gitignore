@@ -1,0 +1,28 @@
+# Secrets
+.env
+*.pem
+secrets/
+
+# Build output
+target/
+backend/target/
+*.class
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Evaluation
+evaluation/results/
+evaluation/.venv/
+__pycache__/
+*.pyc
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code local settings
+.claude/settings.local.json
