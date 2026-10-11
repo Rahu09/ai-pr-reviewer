@@ -35,6 +35,9 @@ This stack is **newer than most AI assistants' training data**. Code written "fr
 | `UnsatisfiedLinkError` from onnxruntime (Chunk 8) | Missing Microsoft Visual C++ runtime → install the latest **VC++ Redistributable (x64)** |
 | Testcontainers can't reach Docker or reports an API-version error | Docker Desktop isn't running, or Testcontainers is too old for the Docker engine → start Docker and use Boot's latest managed Testcontainers |
 | Containers get killed or tests hang in Sprint 3 | WSL 2 memory too low → give Docker ≥ 6 GB in `%UserProfile%\.wslconfig` |
+| `docker compose up` works but the app says password authentication failed after you changed `POSTGRES_PASSWORD` | The Postgres image applies the password only when the data volume is first created → `docker compose down -v` (deletes only local dev data) and start again |
+| A long Git Bash heredoc containing Java text blocks fails with `unexpected EOF while looking for matching` | Bash parses the whole command first → create such files with the editor/Write tool, not a shell heredoc |
+| `java -version` still shows 18 after setting the user `JAVA_HOME` | The machine `Path` lists `C:\Program Files\Common Files\Oracle\Java\javapath` before user entries → remove it from the system `Path` (admin) or rely on `JAVA_HOME` (`mvnw`, IntelliJ use it) |
 | Constant permission prompts in Claude Code | Choose **Always allow** for `./mvnw`, `docker compose`, `git status/diff/add/commit`. **Never** for `git push` |
 
 ## 2. Git and CI
@@ -55,6 +58,10 @@ This stack is **newer than most AI assistants' training data**. Code written "fr
 | `IllegalArgumentException`/odd output from the prompt template | Spring AI templates treat `{…}` as variables → insert diff and evidence as **template variables** (their values aren't parsed). If the template text itself needs literal JSON braces, configure `StTemplateRenderer` with `<` `>` delimiters |
 | OpenAI rejects the JSON schema (strict mode) | Strict mode needs every property `required`, with nullable types for optional ones → adjust the record or schema, or fall back to `JSON_OBJECT` and rely on validation |
 | HTTP 429 from Gemini (free tier) | Rate limit → retry with backoff (already planned), throttle evaluation runs, and don't loop over fixtures in parallel |
+| 502 from the dry run; the log says `404 ... models/gemini-2.5-flash is no longer available to new users` | Google retires model IDs, and new keys can't use old ones → list what your key can use (`GET https://generativelanguage.googleapis.com/v1beta/models` with header `x-goog-api-key`, keep the key out of chat) and pin a current Flash ID in `application.yml` (we use `gemini-3.8-flash`, ADR-0018 addendum) |
+| `spring.ai.model.embedding: none` and `spring.ai.model.embedding.text: none` can't both be written as nested YAML | A key can't be both a value and a map → write these as flat dotted keys at the YAML root (see `application.yml`) |
+| App fails at startup with the Gemini-only key because another provider's model type wants a key | Each starter auto-configures chat, embedding, image, audio and moderation → set `spring.ai.model.{chat,embedding,embedding.text,image,audio.speech,audio.transcription,moderation}` (verified in the 2.0.1 autoconfigure jars); `ProviderSelectionTest` proves each provider starts alone |
+| Spring AI 2.0 API names differ from older blog posts | `responseEntity(Class)` returns `org.springframework.ai.chat.client.ResponseEntity` with `.entity()` and `.response()`; `Usage.getPromptTokens()` is a nullable `Integer`; a test model only needs `ChatModel.call(Prompt)` |
 | Gemini reviews are slow or token-heavy | "Thinking" is on → set `spring.ai.google.genai.chat.thinking-budget` low (measure before and after) |
 
 ## 4. Fixtures (Chunks 2, 4, 10)

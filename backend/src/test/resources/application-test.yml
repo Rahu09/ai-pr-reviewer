@@ -1,0 +1,2 @@
+# Test profile: no external keys, no real LLM (pitfalls §2). Tests supply a stub ReviewGenerator.
+spring.ai.model.chat: none

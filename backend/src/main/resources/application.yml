@@ -12,6 +12,36 @@ spring:
     virtual:
       enabled: true
 
+  ai:
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY:}
+        chat:
+          options:
+            model: gemini-3.8-flash
+            temperature: 0.2
+            max-output-tokens: 4096
+          response-mime-type: application/json
+          thinking-budget: 1024
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      chat:
+        options:
+          model: gpt-5-mini
+          temperature: 1.0
+          max-completion-tokens: 4096
+
+# Provider selection (ADR-0018): LLM_PROVIDER = google-genai (default) | openai.
+# Flat dotted keys on purpose: spring.ai.model.embedding and spring.ai.model.embedding.text can't both be YAML maps.
+# Every model type the starters could auto-configure is switched off except chat, so the app starts with one key.
+spring.ai.model.chat: ${LLM_PROVIDER:google-genai}
+spring.ai.model.embedding: none
+spring.ai.model.embedding.text: none
+spring.ai.model.image: none
+spring.ai.model.audio.speech: none
+spring.ai.model.audio.transcription: none
+spring.ai.model.moderation: none
+
 management:
   endpoints:
     web:

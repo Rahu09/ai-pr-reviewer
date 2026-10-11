@@ -56,3 +56,8 @@ Facts checked on 2026-10-11 in the Spring AI and Google docs:
 - Free-tier limits block a sprint or the evaluation (move to Gemini's paid tier or to OpenAI).
 - Review quality on the fixtures is poor (try the other provider by config and record the result).
 - Anthropic keys become available and you want Claude in the comparison (new ADR).
+
+## Addendum (2026-10-12, Chunk 3)
+- Pinned models: Gemini **`gemini-3.8-flash`** (the ADR's example default `gemini-2.5-flash` returned 404 "no longer available to new users" for a new key, so the pin moved), OpenAI **`gpt-5-mini`** (not exercised yet; no OpenAI key).
+- Spring AI **2.0.1** starters `spring-ai-starter-model-google-genai` and `spring-ai-starter-model-openai`. Model types switched off with `spring.ai.model.{embedding,embedding.text,image,audio.speech,audio.transcription,moderation}=none`; chat is selected by `spring.ai.model.chat=${LLM_PROVIDER:google-genai}`.
+- Structured output uses Spring AI's default converter (`responseEntity(CandidateFindings.class)`: JSON-schema format instructions in the prompt) for **both** providers, plus `response-mime-type: application/json` for Gemini. OpenAI native strict `JSON_SCHEMA` is **not** wired yet. The lenient DTO plus Java validation make that safe. Revisit when first running on OpenAI.
