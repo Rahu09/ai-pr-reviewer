@@ -1,0 +1,21 @@
+{
+  "id": "list-orders-unpaginated",
+  "family": "pagination",
+  "kind": "buggy",
+  "sourceBranch": "feature/list-orders-unpaginated",
+  "baseBranch": "main",
+  "headSha": "a5055d31ff2339a409638f0d4931cbbacd323dc5",
+  "baseSha": "77e240c47e89c647f97310792926683b22cd0bf9",
+  "expectedFindings": [
+    {
+      "file": "src/main/java/io/github/rahu09/orderservice/order/OrderController.java",
+      "line": 32,
+      "category": "GUIDELINE",
+      "ruleId": "API-03",
+      "why": "GET /orders returns every order in one response; the collection endpoint is not paginated."
+    }
+  ],
+  "expectedRuleIds": [
+    "API-03"
+  ]
+}

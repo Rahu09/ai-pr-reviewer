@@ -1,7 +1,7 @@
 # Chunk 01 — Spring Boot skeleton + Postgres + CI
 
 - **Dates built:** 2026-10-11  · **Date studied:** —
-- **Status:** Built (CI run on GitHub pending the owner's push)
+- **Status:** Built
 - **Tag:** chunk-01
 
 ## Goal
@@ -30,7 +30,7 @@ A Boot 4 / Java 25 app with Postgres (pgvector), Flyway, a test profile that nee
 - `./mvnw -B verify`: BUILD SUCCESS, 2 tests green (≈71 s, mostly the first image pull).
 - `docker compose up -d` + `spring-boot:run`: `/actuator/health` → `{"status":"UP"}`.
 - Failure test (Docker stopped): the app fails at startup in `flywayInitializer` with "Connection to localhost:5433 refused"; Flyway is the first bean to touch the DB, so the message is clear.
-- [x] health UP · [x] test green locally · [ ] green in GitHub Actions (after push) · [x] versions in ADR-0004 addendum
+- [x] health UP · [x] test green locally · [x] green in GitHub Actions (CI #1, 51 s) · [x] versions in ADR-0004 addendum
 
 ## Deviations from the plan
 - None.

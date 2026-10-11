@@ -1,0 +1,11 @@
+{
+  "id": "cancel-order-handled",
+  "family": "exceptions",
+  "kind": "clean",
+  "sourceBranch": "clean/cancel-order-handled",
+  "baseBranch": "main",
+  "headSha": "ebbd24d5fb6038a210ff3302289d0abe78f5144a",
+  "baseSha": "77e240c47e89c647f97310792926683b22cd0bf9",
+  "expectedFindings": [],
+  "expectedRuleIds": []
+}

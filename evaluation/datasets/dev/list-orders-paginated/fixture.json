@@ -1,0 +1,11 @@
+{
+  "id": "list-orders-paginated",
+  "family": "pagination",
+  "kind": "clean",
+  "sourceBranch": "clean/list-orders-paginated",
+  "baseBranch": "main",
+  "headSha": "45651aabd14a6f1c483fe3f3fce67bc18b74aa38",
+  "baseSha": "77e240c47e89c647f97310792926683b22cd0bf9",
+  "expectedFindings": [],
+  "expectedRuleIds": []
+}

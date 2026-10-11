@@ -6,6 +6,7 @@ Sections: **Added** / **Changed** / **Removed** / **Fixed**. Link the chunk jour
 ## [Unreleased]
 
 ### Added
+- **Chunk 2-lite** ([journal](docs/chunks/02-demo-repo-lite.md)): demo repo `order-service-demo` (10 rule-ID'd guidelines, 4 branches), `evaluation/make_fixtures.py`, 4 dev fixtures generated from real branches, frozen guidelines copy.
 - **Chunk 1** ([journal](docs/chunks/01-skeleton.md)): Spring Boot 4.0.8 / Java 25 skeleton in `backend/`, `compose.yaml` (pgvector on host port 5433), `application.yml` with `.env` import and virtual threads, `ReviewLimits` configuration record, `V1__init.sql` (pgvector extension), Testcontainers integration test, empty packages per PLAN §3.4, GitHub Actions `ci.yml`. ADR-0004 addendum with pinned versions.
 - **Chunk 0** ([journal](docs/chunks/00-setup.md)): `.gitignore`, `.gitattributes`, `.env.example`, stub README, git repo and first commits.
 

@@ -1,0 +1,56 @@
+diff --git a/src/main/java/io/github/rahu09/orderservice/order/OrderController.java b/src/main/java/io/github/rahu09/orderservice/order/OrderController.java
+index 4b4f883..56494fe 100644
+--- a/src/main/java/io/github/rahu09/orderservice/order/OrderController.java
++++ b/src/main/java/io/github/rahu09/orderservice/order/OrderController.java
+@@ -27,6 +27,11 @@ public class OrderController {
+ 		return ResponseEntity.created(URI.create("/orders/" + order.id())).body(order);
+ 	}
+ 
++	@PostMapping("/{id}/cancel")
++	public Order cancel(@PathVariable UUID id) {
++		return service.cancel(id);
++	}
++
+ 	@GetMapping("/{id}")
+ 	public Order get(@PathVariable UUID id) {
+ 		return service.get(id);
+diff --git a/src/main/java/io/github/rahu09/orderservice/order/OrderService.java b/src/main/java/io/github/rahu09/orderservice/order/OrderService.java
+index 3accffe..ea6ea49 100644
+--- a/src/main/java/io/github/rahu09/orderservice/order/OrderService.java
++++ b/src/main/java/io/github/rahu09/orderservice/order/OrderService.java
+@@ -20,6 +20,17 @@ public class OrderService {
+ 		return repository.save(new Order(UUID.randomUUID(), request.customerId(), items, OrderStatus.CREATED, Instant.now()));
+ 	}
+ 
++	public Order cancel(UUID id) {
++		Order order = get(id);
++		try {
++			return repository.save(order.cancel());
++		}
++		catch (OrderStateException e) {
++			// order already shipped, nothing to cancel
++			return order;
++		}
++	}
++
+ 	public Order get(UUID id) {
+ 		return repository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+ 	}
+diff --git a/src/test/java/io/github/rahu09/orderservice/order/OrderServiceTest.java b/src/test/java/io/github/rahu09/orderservice/order/OrderServiceTest.java
+index c7b2f7b..967d3b5 100644
+--- a/src/test/java/io/github/rahu09/orderservice/order/OrderServiceTest.java
++++ b/src/test/java/io/github/rahu09/orderservice/order/OrderServiceTest.java
+@@ -25,6 +25,13 @@ class OrderServiceTest {
+ 		assertThat(created.total()).isEqualByComparingTo("10.00");
+ 	}
+ 
++	@Test
++	void cancelsAnOrder() {
++		Order created = service.create(request());
++
++		assertThat(service.cancel(created.id()).status()).isEqualTo(OrderStatus.CANCELLED);
++	}
++
+ 	@Test
+ 	void unknownOrderIsNotFound() {
+ 		assertThatThrownBy(() -> service.get(UUID.randomUUID())).isInstanceOf(OrderNotFoundException.class);

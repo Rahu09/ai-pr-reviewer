@@ -1,0 +1,21 @@
+{
+  "id": "cancel-order-swallowed",
+  "family": "exceptions",
+  "kind": "buggy",
+  "sourceBranch": "feature/cancel-order-swallowed",
+  "baseBranch": "main",
+  "headSha": "ac04b65d26a0ab95c811aa5cc9c82c48c67ccfbf",
+  "baseSha": "77e240c47e89c647f97310792926683b22cd0bf9",
+  "expectedFindings": [
+    {
+      "file": "src/main/java/io/github/rahu09/orderservice/order/OrderService.java",
+      "line": 28,
+      "category": "CORRECTNESS",
+      "ruleId": "ERR-02",
+      "why": "OrderStateException is caught and swallowed, so cancelling a shipped order returns 200 with the unchanged order."
+    }
+  ],
+  "expectedRuleIds": [
+    "ERR-02"
+  ]
+}
