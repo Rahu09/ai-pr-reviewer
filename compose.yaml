@@ -1,0 +1,22 @@
+# Local infrastructure. Host ports avoid clashes with other projects (pitfalls §1).
+# Kafka is added in Chunk 12.
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: prreviewer-postgres
+    environment:
+      POSTGRES_DB: prreviewer
+      POSTGRES_USER: prreviewer
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prreviewer -d prreviewer"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

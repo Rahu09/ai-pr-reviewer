@@ -34,7 +34,6 @@ As of 2026-10-04, **Spring AI 2.0.x supports Spring Boot 4.0.x and 4.1.x** (chec
 ## Revisit if
 Spring AI or Spring Boot compatibility changes when generating the project in Chunk 1. Record the actual versions below.
 
-<!-- ## Addendum (YYYY-MM-DD, Chunk 1)
-Pinned versions: Java …, Spring Boot …, Spring AI BOM …, PostgreSQL image …, pgvector …, Testcontainers …
-Package name: …
--->
+## Addendum (2026-10-11, Chunk 1)
+Pinned versions (from start.spring.io's generated pom): Java 25 (OpenJDK 25.0.2 locally, Temurin 25 in CI), Spring Boot **4.0.8** (Spring Framework 7.0.x), Flyway 11.14.1, PostgreSQL JDBC driver 42.7.x, Testcontainers **2.0.5** (`testcontainers-postgresql`, `testcontainers-junit-jupiter`), Jackson 3.1.x (`tools.jackson`). Database image: `pgvector/pgvector:pg17` (compose and tests). The Spring AI BOM is added in Chunk 3; Spring AI **2.0.1** is the latest 2.0.x GA and targets Boot 4.0 (re-confirm when adding it).
+Package name: `io.github.rahu09.prreviewer`. Maven coordinates: `io.github.rahu09:prreviewer`.

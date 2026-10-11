@@ -5,7 +5,9 @@ Sections: **Added** / **Changed** / **Removed** / **Fixed**. Link the chunk jour
 
 ## [Unreleased]
 
-_Nothing yet. Next: Sprint 1, Day 1 (Chunk 0)._
+### Added
+- **Chunk 1** ([journal](docs/chunks/01-skeleton.md)): Spring Boot 4.0.8 / Java 25 skeleton in `backend/`, `compose.yaml` (pgvector on host port 5433), `application.yml` with `.env` import and virtual threads, `ReviewLimits` configuration record, `V1__init.sql` (pgvector extension), Testcontainers integration test, empty packages per PLAN §3.4, GitHub Actions `ci.yml`. ADR-0004 addendum with pinned versions.
+- **Chunk 0** ([journal](docs/chunks/00-setup.md)): `.gitignore`, `.gitattributes`, `.env.example`, stub README, git repo and first commits.
 
 ## [Planning v4.3] — 2026-10-11 (pre-build dry run)
 

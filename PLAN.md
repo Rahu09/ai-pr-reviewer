@@ -382,8 +382,8 @@ Sizes are **learning-mode** estimates: **S** ≈ 1–2 sessions, **M** ≈ 3–5
 
 | # | Chunk | Size | Sprint | Milestone | Built | Studied |
 |---|---|---|---|---|---|---|
-| 0 | Setup and decision log | S | 1 | | ⬜ | ⬜ |
-| 1 | Spring Boot skeleton + Postgres + CI | S | 1 | | ⬜ | ⬜ |
+| 0 | Setup and decision log | S | 1 | | ✅ [journal](docs/chunks/00-setup.md) | ⬜ |
+| 1 | Spring Boot skeleton + Postgres + CI | S | 1 | | 🟨 [journal](docs/chunks/01-skeleton.md) (CI run pending push) | ⬜ |
 | 2 | Demo repo, guidelines, first fixtures (lite in Sprint 1) | M | 1 | | ⬜ | ⬜ |
 | 3 | First LLM call → structured findings | M | 1 | | ⬜ | ⬜ |
 | 4 | Diff parsing, allowed locations, validation ★ | L | 1 | | ⬜ | ⬜ |

@@ -1,7 +1,7 @@
 # Chunk 00 — Setup and decision log
 
-- **Dates built:** 2026-10-11 → (in progress)  · **Date studied:** —
-- **Status:** In progress
+- **Dates built:** 2026-10-11 → 2026-10-11  · **Date studied:** —
+- **Status:** Built
 - **Tag:** chunk-00
 
 ## Goal
@@ -22,13 +22,13 @@ Tools installed, repo created at `E:\production\ai-pr-reviewer` and the document
 
 ## How it was verified
 - `git status` / `git log` show the first commit; `.env` and `.idea/` are ignored (`git check-ignore`).
-- [ ] `java -version` shows 25 in a fresh shell
-- [ ] `docker run hello-world` works
-- [ ] repo pushed to GitHub with ADR 0001–0019
+- [ ] `java -version` shows 25 in a fresh shell (owner: set user `JAVA_HOME`; until then commands use a per-session `JAVA_HOME`. JDK 25 verified by path)
+- [x] `docker run hello-world` works (Docker 29.6.2)
+- [x] repo pushed to GitHub (`origin/main` at the first journal commit, ADRs 0001–0019)
 
 ## Deviations from the plan
 - OpenJDK 25 instead of Temurin 25 (see above); Python 3.13 instead of 3.12 (decide in Chunk 10).
 
 ## Next
-- Owner: set `JAVA_HOME`, start Docker Desktop, create the empty public GitHub repo `ai-pr-reviewer`, add the remote and push.
-- Then Chunk 1.
+- Owner: set the user-level `JAVA_HOME` (still open).
+- Chunk 1 done locally; see its journal.

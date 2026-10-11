@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: prreviewer
+  # Boot does not read .env by itself (pitfalls §1). Works from backend/ (IntelliJ, mvnw) and from the repo root.
+  config:
+    import: "optional:file:.env[.properties],optional:file:../.env[.properties]"
+  datasource:
+    url: jdbc:postgresql://localhost:5433/prreviewer
+    username: prreviewer
+    password: ${POSTGRES_PASSWORD:}
+  threads:
+    virtual:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+reviewer:
+  limits:
+    max-java-files: 10
+    max-changed-lines: 400
+    max-inline-findings: 5
+    max-reviews-per-day: 50
