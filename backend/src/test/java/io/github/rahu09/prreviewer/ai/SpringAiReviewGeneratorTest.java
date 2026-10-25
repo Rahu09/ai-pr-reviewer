@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 class SpringAiReviewGeneratorTest {
 
 	private static final String VALID = """
-			{"findings":[{"filePath":"A.java","line":3,"category":"GUIDELINE","title":"t","explanation":"e",
+			{"findings":[{"locationId":"L3","category":"GUIDELINE","title":"t","explanation":"e",
 			"suggestedFix":"f","suggestedTest":"x"}]}
 			""";
 
@@ -22,9 +22,10 @@ class SpringAiReviewGeneratorTest {
 
 		assertThat(result.findings().findings()).hasSize(1);
 		assertThat(result.findings().findings().getFirst().category()).isEqualTo("GUIDELINE");
+		assertThat(result.findings().findings().getFirst().locationId()).isEqualTo("L3");
 		assertThat(result.provider()).isEqualTo("google-genai");
 		assertThat(result.model()).isEqualTo("scripted-model");
-		assertThat(result.promptVersion()).isEqualTo("review-v1");
+		assertThat(result.promptVersion()).isEqualTo("review-v2");
 		assertThat(result.inputTokens()).isEqualTo(120);
 		assertThat(result.outputTokens()).isEqualTo(30);
 	}
@@ -38,7 +39,7 @@ class SpringAiReviewGeneratorTest {
 
 	@Test
 	void oddCategoryValueDoesNotBreakParsing() {
-		var reply = "{\"findings\":[{\"filePath\":\"A.java\",\"line\":1,\"category\":\"SECURITY\",\"title\":\"t\"}]}";
+		var reply = "{\"findings\":[{\"locationId\":\"L1\",\"category\":\"SECURITY\",\"title\":\"t\"}]}";
 
 		var result = new SpringAiReviewGenerator(new ScriptedChatModel(reply), "openai").generate("+int a;");
 

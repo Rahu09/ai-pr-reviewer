@@ -1,0 +1,88 @@
+diff --git a/logo.png b/logo.png
+index 2b379ce..2a022f9 100644
+Binary files a/logo.png and b/logo.png differ
+diff --git a/notes.sql b/notes.sql
+index b218743..96e61e9 100644
+--- a/notes.sql
++++ b/notes.sql
+@@ -1,3 +1,2 @@
+ # title
+--- removed sql comment
+ keep
+diff --git a/run.sh b/run.sh
+old mode 100644
+new mode 100755
+diff --git a/src/Fresh.java b/src/Fresh.java
+new file mode 100644
+index 0000000..89542b0
+--- /dev/null
++++ b/src/Fresh.java
+@@ -0,0 +1,5 @@
++package x;
++
++public class Fresh {
++  void f() {}
++}
+diff --git a/src/Renamed.java b/src/Moved.java
+similarity index 100%
+rename from src/Renamed.java
+rename to src/Moved.java
+diff --git a/src/RenamedEdited.java b/src/MovedEdited.java
+similarity index 81%
+rename from src/RenamedEdited.java
+rename to src/MovedEdited.java
+index 4f079cd..562b116 100644
+--- a/src/RenamedEdited.java
++++ b/src/MovedEdited.java
+@@ -5,5 +5,5 @@ class Move2 {
+   int d;
+   int e;
+   int f;
+-  int g;
++  int g; int h;
+ }
+diff --git a/src/Multi.java b/src/Multi.java
+index f696b4b..c81e9d1 100644
+--- a/src/Multi.java
++++ b/src/Multi.java
+@@ -1,5 +1,5 @@
+ line1
+-line2
++line2 changed
+ line3
+ line4
+ line5
+@@ -15,6 +15,6 @@ line14
+ line15
+ line16
+ line17
+-line18
++line18 changed
+ line19
+ line20
+diff --git a/src/NoNewline.java b/src/NoNewline.java
+index 006a837..468c024 100644
+--- a/src/NoNewline.java
++++ b/src/NoNewline.java
+@@ -1 +1,2 @@
+-class Same {}
+\ No newline at end of file
++class Same {}
++// added
+diff --git a/src/NoNewlineNew.java b/src/NoNewlineNew.java
+new file mode 100644
+index 0000000..2eb8b43
+--- /dev/null
++++ b/src/NoNewlineNew.java
+@@ -0,0 +1 @@
++class Z {}
+\ No newline at end of file
+diff --git a/src/ToDelete.java b/src/ToDelete.java
+deleted file mode 100644
+index 58698c6..0000000
+--- a/src/ToDelete.java
++++ /dev/null
+@@ -1,3 +0,0 @@
+-class Old {
+-  int a;
+-}

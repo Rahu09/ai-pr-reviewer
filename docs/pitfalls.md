@@ -55,6 +55,7 @@ This stack is **newer than most AI assistants' training data**. Code written "fr
 |---|---|
 | One odd value (e.g. `"category":"SECURITY"`) makes the whole response fail to parse | The DTO is too strict → **LLM-facing records use `String`** for enum-like fields (`category`, `locationId`). `FindingValidator` maps them to enums and suppresses unknown values with a reason. *Parse leniently, validate strictly* |
 | You need both the parsed findings and token usage | `.call().entity(...)` drops the metadata → use **`.call().responseEntity(CandidateFindings.class)`**, which gives the `ChatResponse` (usage) plus the entity |
+| `415 Unsupported Media Type` calling a fixture endpoint from a script | A POST without a body still gets a default `application/x-www-form-urlencoded` content type in some HTTP clients → send `{}` with `Content-Type: application/json` |
 | `IllegalArgumentException`/odd output from the prompt template | Spring AI templates treat `{…}` as variables → insert diff and evidence as **template variables** (their values aren't parsed). If the template text itself needs literal JSON braces, configure `StTemplateRenderer` with `<` `>` delimiters |
 | OpenAI rejects the JSON schema (strict mode) | Strict mode needs every property `required`, with nullable types for optional ones → adjust the record or schema, or fall back to `JSON_OBJECT` and rely on validation |
 | HTTP 429 from Gemini (free tier) | Rate limit → retry with backoff (already planned), throttle evaluation runs, and don't loop over fixtures in parallel |
@@ -69,6 +70,8 @@ This stack is **newer than most AI assistants' training data**. Code written "fr
 | Symptom | Cause → fix |
 |---|---|
 | DiffParser fails on a fixture but works on real PRs | The diff was hand-written with wrong hunk counts → **generate fixtures from real branches** in the demo repo: `git diff --no-color main...<branch> > change.diff`, and file contents with `git show <branch>:<path>` |
+| A diff you edited by hand is rejected with `Invalid diff: ... more lines than its header says` (HTTP 400) | The parser trusts hunk header counts (`@@ -a,b +c,d @@`) → when you add or remove a line, update `b`/`d` too (see `evaluation/injection_check.py`). This strictness is deliberate: a miscounted diff would give wrong line numbers |
+| A removed line like `-- sql comment` (diff line `--- sql comment`) breaks a diff parser | It looks like a file header → inside a hunk, decide by the header's line counts, not by the first characters (`DiffParser`) |
 | Fixture JSON is unreadable or escaping breaks | The diff is embedded in JSON → a **fixture is a folder**: `fixture.json` (id, family, kind, expected findings and rule IDs) + `change.diff` + `files/<path>` (contents at head) |
 
 ## 5. Persistence (Chunk 5)

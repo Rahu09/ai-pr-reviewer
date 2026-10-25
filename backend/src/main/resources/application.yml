@@ -54,3 +54,4 @@ reviewer:
     max-changed-lines: 400
     max-inline-findings: 5
     max-reviews-per-day: 50
+    max-prompt-chars: 60000

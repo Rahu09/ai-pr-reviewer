@@ -3,42 +3,45 @@ package io.github.rahu09.prreviewer.review;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Runs the engine on a pasted diff without posting anything. Calls a paid model, so it must never be exposed
- * publicly (PLAN §6 rule 12): only the webhook and health endpoints are public.
+ * Runs the engine without posting anything. Calls a paid model, so it must never be exposed publicly
+ * (PLAN §6 rule 12): only the webhook and health endpoints are public.
  */
 @RestController
 @RequestMapping("/api/dry-run")
 public class DryRunController {
 
-	private final ReviewGenerator generator;
+	private final ReviewOrchestrator orchestrator;
+	private final FixtureLoader fixtures;
 
-	public DryRunController(ReviewGenerator generator) {
-		this.generator = generator;
+	public DryRunController(ReviewOrchestrator orchestrator, FixtureLoader fixtures) {
+		this.orchestrator = orchestrator;
+		this.fixtures = fixtures;
 	}
 
-	public record DiffRequest(@NotBlank @Size(max = 60_000) String diff) {
+	public record DiffRequest(@NotBlank @Size(max = 200_000) String diff, ReviewConfig.Override config) {
 	}
 
-	public record DryRunResponse(
-			String provider,
-			String model,
-			String promptVersion,
-			int inputTokens,
-			int outputTokens,
-			List<CandidateFinding> findings) {
+	public record FixtureRequest(ReviewConfig.Override config) {
 	}
 
+	/** Review a pasted unified diff (no file contents, so no fixture answer key). */
 	@PostMapping("/diff")
-	public DryRunResponse dryRunDiff(@Valid @RequestBody DiffRequest request) {
-		GenerationResult result = generator.generate(request.diff());
-		return new DryRunResponse(result.provider(), result.model(), result.promptVersion(),
-				result.inputTokens(), result.outputTokens(), result.findings().findings());
+	public ReviewReport dryRunDiff(@Valid @RequestBody DiffRequest request) {
+		return ReviewReport.from(orchestrator.review(ReviewSnapshot.ofDiff(request.diff()), request.config()), null);
+	}
+
+	/** Review a fixture folder; the report includes its answer key so results can be compared. The body is optional. */
+	@PostMapping("/fixture/{id}")
+	public ReviewReport dryRunFixture(@PathVariable String id, @RequestBody(required = false) FixtureRequest request) {
+		FixtureLoader.LoadedFixture fixture = fixtures.load(id);
+		ReviewConfig.Override override = request == null ? null : request.config();
+		return ReviewReport.from(orchestrator.review(fixture.snapshot(), override), fixture.meta());
 	}
 }

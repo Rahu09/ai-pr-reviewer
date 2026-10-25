@@ -12,6 +12,6 @@ public class StubReviewGeneratorConfiguration {
 
 	@Bean
 	ReviewGenerator stubReviewGenerator() {
-		return diff -> new GenerationResult(new CandidateFindings(null), "stub", "stub-model", "review-v1", 0, 0);
+		return annotatedDiff -> new GenerationResult(new CandidateFindings(null), "stub", "stub-model", "review-v2", 0, 0);
 	}
 }

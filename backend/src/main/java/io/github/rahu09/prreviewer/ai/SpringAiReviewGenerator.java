@@ -28,7 +28,7 @@ import tools.jackson.core.JacksonException;
 @ConditionalOnExpression("'${spring.ai.model.chat:none}' != 'none'")
 public class SpringAiReviewGenerator implements ReviewGenerator {
 
-	static final String PROMPT_VERSION = "review-v1";
+	static final String PROMPT_VERSION = "review-v2";
 	private static final int MAX_ATTEMPTS = 2;
 	private static final Logger log = LoggerFactory.getLogger(SpringAiReviewGenerator.class);
 
@@ -45,14 +45,14 @@ public class SpringAiReviewGenerator implements ReviewGenerator {
 	}
 
 	@Override
-	public GenerationResult generate(String diff) {
+	public GenerationResult generate(String annotatedDiff) {
 		RuntimeException lastParseFailure = null;
 		for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
 			try {
 				// The diff is a template VARIABLE, never concatenated: Java code contains { } (pitfalls §3).
 				var response = chatClient.prompt()
 						.system(systemPrompt)
-						.user(u -> u.text(userTemplate).param("diff", diff))
+						.user(u -> u.text(userTemplate).param("diff", annotatedDiff))
 						.call()
 						.responseEntity(CandidateFindings.class);
 				CandidateFindings findings = response.entity();

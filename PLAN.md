@@ -386,7 +386,7 @@ Sizes are **learning-mode** estimates: **S** ≈ 1–2 sessions, **M** ≈ 3–5
 | 1 | Spring Boot skeleton + Postgres + CI | S | 1 | | ✅ [journal](docs/chunks/01-skeleton.md) | ⬜ |
 | 2 | Demo repo, guidelines, first fixtures (lite in Sprint 1) | M | 1 | | 🟨 [journal](docs/chunks/02-demo-repo-lite.md) (PRs pending) | ⬜ |
 | 3 | First LLM call → structured findings | M | 1 | | ✅ [journal](docs/chunks/03-first-llm-call.md) | ⬜ |
-| 4 | Diff parsing, allowed locations, validation ★ | L | 1 | | ⬜ | ⬜ |
+| 4 | Diff parsing, allowed locations, validation ★ | L | 1 | | ✅ [journal](docs/chunks/04-diff-parsing.md) | ⬜ |
 | 5 | Persist runs and findings | M | 1 | | ⬜ | ⬜ |
 | 6 | Review a real PR (GitHub read, dry-run) | M | 1 | | ⬜ | ⬜ |
 | 7 | Publish a review (manual trigger) | M | 1 | **v0.1 Demoable** | ⬜ | ⬜ |

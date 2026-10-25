@@ -1,14 +1,13 @@
 package io.github.rahu09.prreviewer.review;
 
 /**
- * One finding as the model proposed it. LLM-facing, so deliberately lenient: every text field is a String
- * and a missing value becomes "" (parse leniently, validate strictly: the validator in Chunk 4 maps
- * {@code category} to an enum and suppresses bad values with a reason). {@code line} is the model's guess
- * until Chunk 4 replaces it with allowed location IDs.
+ * One finding as the model proposed it (prompt review-v2). LLM-facing, so deliberately lenient: every field is a
+ * String and a missing value becomes "" (parse leniently, validate strictly: {@code FindingValidator} maps
+ * {@code category} to an enum and {@code locationId} to a real location, or suppresses with a reason).
+ * The model returns a location ID such as "L12", never a line number (ADR-0008).
  */
 public record CandidateFinding(
-		String filePath,
-		int line,
+		String locationId,
 		String category,
 		String title,
 		String explanation,
@@ -16,7 +15,7 @@ public record CandidateFinding(
 		String suggestedTest) {
 
 	public CandidateFinding {
-		filePath = orEmpty(filePath);
+		locationId = orEmpty(locationId);
 		category = orEmpty(category);
 		title = orEmpty(title);
 		explanation = orEmpty(explanation);
