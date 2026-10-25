@@ -1,8 +1,8 @@
 package io.github.rahu09.prreviewer;
 
-import io.github.rahu09.prreviewer.review.CandidateFindings;
-import io.github.rahu09.prreviewer.review.GenerationResult;
 import io.github.rahu09.prreviewer.review.ReviewGenerator;
+import io.github.rahu09.prreviewer.review.model.CandidateFindings;
+import io.github.rahu09.prreviewer.review.model.GenerationResult;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 

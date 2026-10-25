@@ -1,8 +1,8 @@
 package io.github.rahu09.prreviewer.publishing;
 
-import io.github.rahu09.prreviewer.context.AllowedLocation;
-import io.github.rahu09.prreviewer.review.CandidateFinding;
-import io.github.rahu09.prreviewer.review.Category;
+import io.github.rahu09.prreviewer.context.location.AllowedLocation;
+import io.github.rahu09.prreviewer.review.model.CandidateFinding;
+import io.github.rahu09.prreviewer.review.model.Category;
 
 /**
  * What the validator decided about one candidate finding. Sealed, so any {@code switch} must handle all three

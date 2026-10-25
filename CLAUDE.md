@@ -43,6 +43,11 @@ The kickoff message says **build mode** or **study mode**. If it doesn't, ask.
 - **Tests never call real external APIs.** The LLM, Jev and GitHub are stubbed or WireMocked. The test profile sets `spring.ai.model.chat=none`, and CI has no API keys. Real calls happen only in manual dry runs.
 - **Trusted PRs only** (ADR-0019): same-repo branches by allowlisted authors, plus the daily cap.
 
+## Code layout (docs/code-map.md)
+- Group by feature first, role second: e.g. `review/model` (data in flight), `review/run` (stored), `review/api` (HTTP), `review/fixture`. Keep a package's entry point (like `ReviewOrchestrator`) at its top level.
+- New class → the folder matching its role. Keep folders at about 8 files; **propose a split before a folder passes about 12**. No project-wide `controllers/` or `repositories/` folders.
+- Only top-level feature packages (`review`, `context`, `github`, `publishing`, `ai`, ...) get a one-line `package-info.java`; sub-packages are described in `docs/code-map.md`. Update `docs/code-map.md` when a chunk adds a package or moves a step.
+
 ## Code style: modern Java 25 (see docs/java-style-guide.md)
 - **Records** for all data (domain, DTOs, Kafka events, `@ConfigurationProperties`). Validate in compact constructors and use `List.copyOf` for immutability. No Lombok, no setters.
 - **Sealed interfaces + records** for closed outcomes, with an exhaustive pattern `switch` and no `default`.

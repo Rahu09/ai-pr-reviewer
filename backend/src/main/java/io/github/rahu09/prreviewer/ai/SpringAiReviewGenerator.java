@@ -1,9 +1,9 @@
 package io.github.rahu09.prreviewer.ai;
 
-import io.github.rahu09.prreviewer.review.CandidateFindings;
-import io.github.rahu09.prreviewer.review.GenerationResult;
 import io.github.rahu09.prreviewer.review.ReviewGenerationException;
 import io.github.rahu09.prreviewer.review.ReviewGenerator;
+import io.github.rahu09.prreviewer.review.model.CandidateFindings;
+import io.github.rahu09.prreviewer.review.model.GenerationResult;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;

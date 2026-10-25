@@ -1,5 +1,8 @@
 package io.github.rahu09.prreviewer.review;
 
+import io.github.rahu09.prreviewer.context.location.AnnotatedDiff;
+import io.github.rahu09.prreviewer.review.model.GenerationResult;
+
 /** Turns an annotated diff into candidate findings. The only place the engine talks to an LLM (ADR-0016, ADR-0018). */
 public interface ReviewGenerator {
 

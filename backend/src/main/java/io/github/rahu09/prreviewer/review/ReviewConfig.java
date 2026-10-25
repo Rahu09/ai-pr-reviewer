@@ -1,6 +1,6 @@
 package io.github.rahu09.prreviewer.review;
 
-import io.github.rahu09.prreviewer.context.ContextBudget;
+import io.github.rahu09.prreviewer.context.budget.ContextBudget;
 
 /**
  * The effective settings of one review. Starts from {@link ReviewLimits} (application config) and can be

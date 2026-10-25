@@ -159,6 +159,8 @@ E:\production\
                                      api-conventions.md, architecture-decisions.md
 ```
 
+The current package layout (sub-packages by role) is in [docs/code-map.md](docs/code-map.md). The tree above is the top level only.
+
 Choose your Java package name in Chunk 1 (for example `io.github.<your-github-username>.prreviewer`) and record it in the chunk journal.
 
 ### 3.5 Kafka design (built in Chunks 12–13) → [ADR-0014](docs/decisions/0014-kafka-event-driven-processing-with-outbox.md)

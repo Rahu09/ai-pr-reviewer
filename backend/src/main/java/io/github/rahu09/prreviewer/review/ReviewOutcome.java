@@ -1,7 +1,8 @@
 package io.github.rahu09.prreviewer.review;
 
-import io.github.rahu09.prreviewer.context.SkippedFile;
+import io.github.rahu09.prreviewer.context.budget.SkippedFile;
 import io.github.rahu09.prreviewer.publishing.ValidationResult;
+import io.github.rahu09.prreviewer.review.model.GenerationResult;
 import java.util.List;
 import java.util.UUID;
 

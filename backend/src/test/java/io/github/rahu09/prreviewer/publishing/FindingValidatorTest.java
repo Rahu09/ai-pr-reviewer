@@ -2,13 +2,13 @@ package io.github.rahu09.prreviewer.publishing;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.rahu09.prreviewer.context.AllowedLocation;
 import io.github.rahu09.prreviewer.context.Side;
+import io.github.rahu09.prreviewer.context.location.AllowedLocation;
 import io.github.rahu09.prreviewer.publishing.ValidationResult.Publishable;
 import io.github.rahu09.prreviewer.publishing.ValidationResult.SummaryOnly;
 import io.github.rahu09.prreviewer.publishing.ValidationResult.Suppressed;
-import io.github.rahu09.prreviewer.review.CandidateFinding;
-import io.github.rahu09.prreviewer.review.Category;
+import io.github.rahu09.prreviewer.review.model.CandidateFinding;
+import io.github.rahu09.prreviewer.review.model.Category;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 

@@ -3,8 +3,8 @@ package io.github.rahu09.prreviewer.ai;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.github.rahu09.prreviewer.review.GenerationResult;
 import io.github.rahu09.prreviewer.review.ReviewGenerationException;
+import io.github.rahu09.prreviewer.review.model.GenerationResult;
 import org.junit.jupiter.api.Test;
 
 class SpringAiReviewGeneratorTest {
