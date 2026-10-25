@@ -20,6 +20,12 @@ __pycache__/
 *.pyc
 .venv/
 
+# Planning and study docs stay local only (the owner's choice, 2026-10-26)
+docs/
+PLAN.md
+CLAUDE.md
+CHANGELOG.md
+
 # OS
 .DS_Store
 Thumbs.db
