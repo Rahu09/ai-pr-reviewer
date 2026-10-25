@@ -15,6 +15,7 @@ Package root: `backend/src/main/java/io/github/rahu09/prreviewer/`. Tests mirror
 | 7. LLM | Gemini or OpenAI through Spring AI | `ai/` (implements `review/ReviewGenerator`) |
 | 8. Validate | Map IDs to real lines, suppress bad findings with a reason | `publishing/` (`FindingValidator`, `ValidationResult`) |
 | 9. Save | Run and all findings in Postgres | `review/run/` |
+| 10. Publish | Re-check the PR, find our marker, post one `COMMENT` review (`POST /api/reviews/{runId}/publish`) | `publishing/` (`ReviewPublisher`, `ReviewSummaryFormatter`, `PublishOutcome`), `review/api/PublishController` |
 
 ## Packages
 
@@ -26,8 +27,8 @@ Package root: `backend/src/main/java/io/github/rahu09/prreviewer/`. Tests mirror
 | `review/api/` | Controllers, `ReviewReport`, `ApiExceptionHandler` | `review` |
 | `review/fixture/` | `FixtureLoader`, `FixtureMeta` | `review` |
 | `context/` (+ `budget/`, `location/`) | Diff parsing, limits, allowed locations | nothing outside itself |
-| `github/` | Token provider, `GitHubClient`, DTOs, snapshot provider | `review`, `context` |
-| `publishing/` | `FindingValidator`, `ValidationResult` (Chunk 7 adds the publisher) | `context`, `review/model` |
+| `github/` | Token provider, `GitHubClient` (reads, and create-review), DTOs, snapshot provider | `review`, `context` |
+| `publishing/` | `FindingValidator`, `ValidationResult`, `ReviewPublisher`, `ReviewSummaryFormatter`, sealed `PublishOutcome` | `context`, `review/model`, `review/run`, `github` |
 | `ai/` | `SpringAiReviewGenerator` | `review` |
 | `knowledge/`, `messaging/`, `webhook/` | Empty until Chunks 8, 12 and 11 | |
 

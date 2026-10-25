@@ -3,11 +3,15 @@ package io.github.rahu09.prreviewer.github;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -99,6 +103,50 @@ class GitHubClientTest {
 
 		assertThatThrownBy(() -> client.getPullRequest("o", "r", 1))
 				.isInstanceOfSatisfying(GitHubException.class, e -> assertThat(e.getMessage()).contains("permission"));
+	}
+
+	@Test
+	void createReviewPostsACommentReviewPinnedToTheCommitWithSnakeCaseFieldsAndReturnsItsId() {
+		server.expect(requestTo("https://api.github.com/repos/o/r/pulls/7/reviews"))
+				.andExpect(method(HttpMethod.POST))
+				.andExpect(header("Authorization", "Bearer test-token"))
+				.andExpect(jsonPath("$.commit_id").value("headsha"))
+				.andExpect(jsonPath("$.event").value("COMMENT"))
+				.andExpect(jsonPath("$.body").value("summary"))
+				.andExpect(jsonPath("$.comments[0].path").value("src/A.java"))
+				.andExpect(jsonPath("$.comments[0].line").value(12))
+				.andExpect(jsonPath("$.comments[0].side").value("RIGHT"))
+				.andExpect(jsonPath("$.comments[0].body").value("inline text"))
+				.andRespond(withSuccess("{\"id\":4321,\"body\":\"summary\",\"state\":\"COMMENTED\"}", MediaType.APPLICATION_JSON));
+
+		long id = client.createReview("o", "r", 7, ReviewSubmission.comment("headsha", "summary",
+				List.of(new ReviewSubmission.InlineComment("src/A.java", 12, "RIGHT", "inline text"))));
+
+		assertThat(id).isEqualTo(4321L);
+		server.verify();
+	}
+
+	@Test
+	void rejectedInlineLocationIsAGitHubExceptionWithStatus422() {
+		server.expect(requestTo("https://api.github.com/repos/o/r/pulls/7/reviews")).andRespond(withStatus(HttpStatus.UNPROCESSABLE_ENTITY));
+
+		assertThatThrownBy(() -> client.createReview("o", "r", 7, ReviewSubmission.comment("headsha", "s", List.of())))
+				.isInstanceOfSatisfying(GitHubException.class, e -> assertThat(e.status()).isEqualTo(422));
+	}
+
+	@Test
+	void listReviewsFollowsPagesUntilAShortOneAndToleratesNullBodies() {
+		String fullPage = "[" + String.join(",", java.util.Collections.nCopies(100, "{\"id\":1,\"body\":\"b\",\"state\":\"COMMENTED\"}")) + "]";
+		server.expect(requestTo("https://api.github.com/repos/o/r/pulls/7/reviews?per_page=100&page=1"))
+				.andRespond(withSuccess(fullPage, MediaType.APPLICATION_JSON));
+		server.expect(requestTo("https://api.github.com/repos/o/r/pulls/7/reviews?per_page=100&page=2"))
+				.andRespond(withSuccess("[{\"id\":2,\"body\":null}]", MediaType.APPLICATION_JSON));
+
+		List<PullRequestReview> reviews = client.listReviews("o", "r", 7);
+
+		assertThat(reviews).hasSize(101);
+		assertThat(reviews.getLast()).isEqualTo(new PullRequestReview(2, ""));
+		server.verify();
 	}
 
 	@Test

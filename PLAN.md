@@ -391,7 +391,7 @@ Sizes are **learning-mode** estimates: **S** ≈ 1–2 sessions, **M** ≈ 3–5
 | 4 | Diff parsing, allowed locations, validation ★ | L | 1 | | ✅ [journal](docs/chunks/04-diff-parsing.md) | ⬜ |
 | 5 | Persist runs and findings | M | 1 | | ✅ [journal](docs/chunks/05-persist-runs.md) | ⬜ |
 | 6 | Review a real PR (GitHub read, dry-run) | M | 1 | | ✅ [journal](docs/chunks/06-github-read.md) | ⬜ |
-| 7 | Publish a review (manual trigger) | M | 1 | **v0.1 Demoable** | ⬜ | ⬜ |
+| 7 | Publish a review (manual trigger) | M | 1 | **v0.1 Demoable** | ✅ [journal](docs/chunks/07-publish-review.md) (live post on PR #1 confirmed) | ⬜ |
 | 11 | GitHub App + webhook receiver ★ (in-process trigger until Sprint 3) | M | 1 | **v0.1 Automatic** | ⬜ | ⬜ |
 | 8 | Guideline RAG (similarity) | L | 2 | | ⬜ | ⬜ |
 | 9 | Jev relevance ranking | M | 2 | | ⬜ | ⬜ |
@@ -665,7 +665,7 @@ Every card has a **Modern Java** line saying which language features that chunk 
   - **Convert the downloaded key** from PKCS#1 to PKCS#8 (`openssl pkcs8 -topk8 -nocrypt …`) and keep both files in `E:\production\secrets\`.
   - Build the RS256 JWT with the **JDK alone** (`Signature` SHA256withRSA, URL-safe Base64 without padding; `iat` = now − 60 s, `exp` ≤ 10 min, `iss` = App ID). No JWT library is needed.
   - The installation ID comes from the payload's `installation.id` (pitfalls §6).
-- `V4` migration: `webhook_deliveries` (§5).
+- `V5` migration (`V4` was taken by Chunk 7's `publish_review`): `webhook_deliveries` (§5).
 - ★ `POST /webhooks/github`: read the **raw body** and verify `X-Hub-Signature-256` **before** parsing. Then read `X-GitHub-Event` and `X-GitHub-Delivery` and parse into **record payloads**, using a `switch` on event and action. Verify over the raw bytes (`@RequestBody byte[]`, constant-time compare) and answer `ping` with 200. Filter on the in-scope actions, non-draft PRs, the allowed repo, **same-repo branches by allowlisted authors** and the **daily cap** (ADR-0019). Untrusted events are stored as `IGNORED_UNTRUSTED`. Persist `webhook_deliveries`; a duplicate delivery ID returns 200 and does nothing. Respond quickly.
 - Use the smee.io client to forward events to localhost: `npx smee-client --url <channel> --target http://localhost:8080/webhooks/github` (needs Node.js). Create the smee channel **before** creating the App, because the App's webhook URL is that channel.
 - **Fast track (Sprint 1):** after storing a new in-scope delivery, start the review **in-process on a virtual thread** (fetch the snapshot, review, publish), **after the delivery row commits** (`@TransactionalEventListener(phase = AFTER_COMMIT)`). The webhook still returns 2xx immediately. This is deliberately temporary and **not durable**: a crash mid-review loses it, and redelivering from GitHub's UI recovers it. Write that limitation in the journal. Chunk 12 adds the outbox and Kafka publishing **alongside** it, so reviews keep working. **Chunk 13 removes it** once the Kafka consumer takes over.
@@ -697,7 +697,7 @@ Every card has a **Modern Java** line saying which language features that chunk 
   - Map Kafka UI to host port **8081**, because the app uses 8080 (pitfalls §9).
 - Add Spring for Apache Kafka. Declare `NewTopic` beans for `pr-review.requested.v1` (3 partitions) and its DLT, and configure the producer with `acks=all` and idempotence.
 - `ReviewRequested` **event record**, sent as a **JSON String** (`StringSerializer` + our own `JsonMapper`) and consumed with `StringDeserializer`. Avoiding Spring Kafka's JSON (de)serializers sidesteps their type-header and "trusted packages" errors (pitfalls §9).
-- `V5` migration: `review_requests` and `outbox_events` (§5).
+- `V6` migration (numbers shifted by Chunks 6 and 7): `review_requests` and `outbox_events` (§5).
 - Extend the webhook handler so that **one transaction** does four things: insert the delivery, mark older `QUEUED` requests for this PR as `SUPERSEDED`, insert the new request, and insert the outbox row.
 - ★ `OutboxRelay` (`@Scheduled`): claims pending rows with **text-block SQL** (`FOR UPDATE SKIP LOCKED`, ordered by id). For each row it sends to Kafka with the PR key, **waits for the ack**, and then sets `published_at`. On failure the row is left for the next tick, with `publish_attempts` and `last_error` updated.
 - For now, watch the events in Kafka UI or with `kafka-console-consumer`. The consumer comes in Chunk 13.

@@ -116,6 +116,28 @@ public class JdbcReviewRunRepository implements ReviewRunRepository {
 	}
 
 	@Override
+	public void recordPublished(UUID runId, long githubReviewId, boolean summaryOnly, Instant publishedAt) {
+		jdbc.sql("""
+				UPDATE review_runs
+				SET github_review_id = :reviewId, publish_summary_only = :summaryOnly, published_at = :publishedAt
+				WHERE id = :id
+				""")
+				.param("id", runId)
+				.param("reviewId", githubReviewId)
+				.param("summaryOnly", summaryOnly)
+				.param("publishedAt", utc(publishedAt))
+				.update();
+	}
+
+	@Override
+	public void markSuperseded(UUID runId) {
+		// Only a finished run can be superseded; a published one is left alone (its review already exists).
+		jdbc.sql("UPDATE review_runs SET status = 'SUPERSEDED' WHERE id = :id AND status = 'SUCCEEDED' AND github_review_id IS NULL")
+				.param("id", runId)
+				.update();
+	}
+
+	@Override
 	public Optional<ReviewRun> findRun(UUID id) {
 		return jdbc.sql("SELECT * FROM review_runs WHERE id = :id")
 				.param("id", id)
@@ -198,7 +220,10 @@ public class JdbcReviewRunRepository implements ReviewRunRepository {
 				nullableLong(rs, "generation_ms"),
 				nullableLong(rs, "latency_ms"),
 				rs.getObject("started_at", OffsetDateTime.class).toInstant(),
-				instantOrNull(rs, "finished_at"));
+				instantOrNull(rs, "finished_at"),
+				nullableLong(rs, "github_review_id"),
+				instantOrNull(rs, "published_at"),
+				rs.getBoolean("publish_summary_only"));
 	}
 
 	private StoredFinding mapFinding(ResultSet rs, int rowNum) throws SQLException {

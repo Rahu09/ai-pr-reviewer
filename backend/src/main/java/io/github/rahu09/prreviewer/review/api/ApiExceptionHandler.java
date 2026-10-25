@@ -2,6 +2,7 @@ package io.github.rahu09.prreviewer.review.api;
 
 import io.github.rahu09.prreviewer.context.DiffParseException;
 import io.github.rahu09.prreviewer.github.GitHubException;
+import io.github.rahu09.prreviewer.publishing.PublishNotAllowedException;
 import io.github.rahu09.prreviewer.review.ReviewGenerationException;
 import io.github.rahu09.prreviewer.review.fixture.FixtureNotFoundException;
 import io.github.rahu09.prreviewer.review.run.RunNotFoundException;
@@ -35,6 +36,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		log.warn("GitHub call failed: {}", e.getMessage());
 		HttpStatus status = e.status() == 404 ? HttpStatus.NOT_FOUND : HttpStatus.BAD_GATEWAY;
 		return ProblemDetail.forStatusAndDetail(status, e.getMessage());
+	}
+
+	@ExceptionHandler(PublishNotAllowedException.class)
+	ProblemDetail publishNotAllowed(PublishNotAllowedException e) {
+		return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
 	}
 
 	@ExceptionHandler(RunNotFoundException.class)

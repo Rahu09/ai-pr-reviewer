@@ -27,6 +27,12 @@ public interface ReviewRunRepository {
 
 	void fail(UUID runId, FailedStage stage, String errorMessage, long latencyMs, Instant finishedAt);
 
+	/** Remembers the GitHub review that carries this run's findings (Chunk 7). */
+	void recordPublished(UUID runId, long githubReviewId, boolean summaryOnly, Instant publishedAt);
+
+	/** The PR moved on (closed, or a new head commit) before anything was posted. */
+	void markSuperseded(UUID runId);
+
 	Optional<ReviewRun> findRun(UUID id);
 
 	List<StoredFinding> findFindings(UUID runId);

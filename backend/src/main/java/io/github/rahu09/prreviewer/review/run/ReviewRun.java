@@ -36,7 +36,10 @@ public record ReviewRun(
 		Long generationMs,
 		Long latencyMs,
 		Instant startedAt,
-		Instant finishedAt) {
+		Instant finishedAt,
+		Long githubReviewId,
+		Instant publishedAt,
+		boolean publishSummaryOnly) {
 
 	public ReviewRun {
 		filesReviewed = List.copyOf(filesReviewed);

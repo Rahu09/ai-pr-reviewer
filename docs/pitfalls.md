@@ -103,6 +103,10 @@ This stack is **newer than most AI assistants' training data**. Code written "fr
 | A `ping` delivery right after creating the App | Normal → return 200 |
 | `npx` not found | smee needs **Node.js LTS**: `npx smee-client --url <channel> --target http://localhost:8080/webhooks/github` |
 | Strangers' fork PRs trigger reviews | The demo repo is public → review **only same-repo branches by allowlisted authors** (ADR-0019) |
+| Retry after a timeout would post a second review | GitHub accepted the first one but we never stored its id → identify our review by the hidden marker in its body (`sha` + `config`), listing the PR's reviews before every create (Chunk 7) |
+| A model-written finding pings someone or fakes our marker | The model read untrusted PR text and its output goes into a Markdown body → put a zero-width space after `@` and turn `<!--` into `&lt;!--` before posting |
+| Review body rejected as too long | 65,536 character limit → cut the content (60,000 for the summary, 4,000 per inline comment) **before** appending the footer, so the marker is never cut off |
+| Mockito: a second `when(mock.m()).thenThrow(...)` throws the *first* stub | `when()` calls the already-stubbed method → use `doThrow(...).when(mock).m()` when re-stubbing |
 | The review starts before the delivery row exists | It started inside the transaction → start the in-process review **after commit** (`@TransactionalEventListener(phase = AFTER_COMMIT)`) |
 
 ## 7. RAG (Chunk 8)

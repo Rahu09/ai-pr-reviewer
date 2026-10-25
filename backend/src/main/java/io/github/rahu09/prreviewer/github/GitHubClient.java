@@ -1,5 +1,7 @@
 package io.github.rahu09.prreviewer.github;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -8,7 +10,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
 /**
- * Read-only GitHub REST calls (Chunk 6). Every method maps HTTP failures to {@link GitHubException} with a message
+ * GitHub REST calls: reads from Chunk 6, and creating a review from Chunk 7 (the only write). Every method maps HTTP failures to {@link GitHubException} with a message
  * that says what to check, instead of leaking {@code RestClient} exceptions upwards.
  */
 @Component
@@ -16,6 +18,8 @@ public class GitHubClient {
 
 	private static final String RAW = "application/vnd.github.raw+json";
 	private static final String DIFF = "application/vnd.github.diff";
+	private static final int REVIEWS_PER_PAGE = 100;
+	private static final int MAX_REVIEW_PAGES = 10;
 
 	private final RestClient http;
 	private final GitHubTokenProvider tokens;
@@ -69,6 +73,46 @@ public class GitHubClient {
 		}
 	}
 
+	/** All reviews on a PR, oldest first (GitHub pages at 100). Needed to find our marker after a lost response. */
+	public List<PullRequestReview> listReviews(String owner, String repo, int number) {
+		List<PullRequestReview> all = new ArrayList<>();
+		// A loop, not a stream: pages are fetched until a short one arrives. Capped, so a runaway PR cannot spin forever.
+		for (int page = 1; page <= MAX_REVIEW_PAGES; page++) {
+			int pageNumber = page;
+			PullRequestReview[] batch = call("reviews of " + owner + "/" + repo + "#" + number, () -> http.get()
+					.uri(u -> u.pathSegment("repos", owner, repo, "pulls", String.valueOf(number), "reviews")
+							.queryParam("per_page", REVIEWS_PER_PAGE).queryParam("page", pageNumber).build())
+					.headers(this::auth)
+					.accept(MediaType.parseMediaType("application/vnd.github+json"))
+					.retrieve()
+					.body(PullRequestReview[].class));
+			if (batch == null) {
+				break;
+			}
+			all.addAll(List.of(batch));
+			if (batch.length < REVIEWS_PER_PAGE) {
+				break;
+			}
+		}
+		return List.copyOf(all);
+	}
+
+	/** Creates the review and returns its id. A 422 means one inline location was refused: the caller may retry summary-only. */
+	public long createReview(String owner, String repo, int number, ReviewSubmission submission) {
+		PullRequestReview created = call("review on " + owner + "/" + repo + "#" + number, () -> http.post()
+				.uri(u -> u.pathSegment("repos", owner, repo, "pulls", String.valueOf(number), "reviews").build())
+				.headers(this::auth)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.parseMediaType("application/vnd.github+json"))
+				.body(submission)
+				.retrieve()
+				.body(PullRequestReview.class));
+		if (created == null) {
+			throw new GitHubException("GitHub returned no review for " + owner + "/" + repo + "#" + number, 0, null);
+		}
+		return created.id();
+	}
+
 	private void auth(HttpHeaders headers) {
 		headers.setBearerAuth(tokens.token());
 	}
@@ -82,7 +126,7 @@ public class GitHubClient {
 			boolean rateLimited = (status == 403 || status == 429) && "0".equals(e.getResponseHeaders() == null ? null : e.getResponseHeaders().getFirst("X-RateLimit-Remaining"));
 			String hint = switch (status) {
 				case 401 -> "token rejected (expired or wrong)";
-				case 403, 429 -> rateLimited ? "rate limit exceeded" : "no permission (check the token's repository access and Contents / Pull requests read)";
+				case 403, 429 -> rateLimited ? "rate limit exceeded" : "no permission (check the token's repository access: Contents read, Pull requests read and write)";
 				case 404 -> "not found, or the token cannot see it";
 				case 422 -> "GitHub refused the request";
 				default -> status >= 500 ? "GitHub is having trouble" : "unexpected response";
