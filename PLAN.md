@@ -392,7 +392,7 @@ Sizes are **learning-mode** estimates: **S** ≈ 1–2 sessions, **M** ≈ 3–5
 | 5 | Persist runs and findings | M | 1 | | ✅ [journal](docs/chunks/05-persist-runs.md) | ⬜ |
 | 6 | Review a real PR (GitHub read, dry-run) | M | 1 | | ✅ [journal](docs/chunks/06-github-read.md) | ⬜ |
 | 7 | Publish a review (manual trigger) | M | 1 | **v0.1 Demoable** | ✅ [journal](docs/chunks/07-publish-review.md) (live post on PR #1 confirmed) | ⬜ |
-| 11 | GitHub App + webhook receiver ★ (in-process trigger until Sprint 3) | M | 1 | **v0.1 Automatic** | ⬜ | ⬜ |
+| 11 | GitHub App + webhook receiver ★ (in-process trigger until Sprint 3) | M | 1 | **v0.1 Automatic** | ✅ [journal](docs/chunks/11-github-app-webhook.md) (live run needs the App, owner steps) | ⬜ |
 | 8 | Guideline RAG (similarity) | L | 2 | | ⬜ | ⬜ |
 | 9 | Jev relevance ranking | M | 2 | | ⬜ | ⬜ |
 | 10 | Evaluation A/B/C ★ (lite in Sprint 2) | L | 2 | **v0.2 Measured** | ⬜ | ⬜ |

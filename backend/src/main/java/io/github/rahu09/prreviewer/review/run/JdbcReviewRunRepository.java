@@ -138,6 +138,15 @@ public class JdbcReviewRunRepository implements ReviewRunRepository {
 	}
 
 	@Override
+	public long countStartedSince(RunSource source, Instant since) {
+		return jdbc.sql("SELECT count(*) FROM review_runs WHERE source = :source AND started_at >= :since")
+				.param("source", source.name())
+				.param("since", utc(since))
+				.query(Long.class)
+				.single();
+	}
+
+	@Override
 	public Optional<ReviewRun> findRun(UUID id) {
 		return jdbc.sql("SELECT * FROM review_runs WHERE id = :id")
 				.param("id", id)

@@ -58,3 +58,15 @@ reviewer:
 
   github:
     pat: ${GITHUB_PAT:}
+
+  # GitHub App (Chunk 11). With an App id set, installation tokens replace the PAT (ADR-0010).
+  github-app:
+    id: ${GITHUB_APP_ID:}
+    private-key-path: ${GITHUB_APP_PRIVATE_KEY_PATH:}
+    installation-id: ${GITHUB_APP_INSTALLATION_ID:}
+
+  # Public webhook (Chunk 11). Trusted PRs only: same-repo branches by allowlisted authors (ADR-0019).
+  webhook:
+    secret: ${GITHUB_WEBHOOK_SECRET:}
+    allowed-repos: ${REVIEWER_ALLOWED_REPOS:Rahu09/order-service-demo}
+    allowed-authors: ${REVIEWER_ALLOWED_AUTHORS:Rahu09}

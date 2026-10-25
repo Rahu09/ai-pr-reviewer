@@ -1,8 +1,6 @@
 package io.github.rahu09.prreviewer.github;
 
-import org.springframework.stereotype.Component;
-
-@Component
+/** The fine-grained PAT from {@code GITHUB_PAT}; chosen by {@code GitHubAuthConfiguration} when no App is configured. */
 public class PatTokenProvider implements GitHubTokenProvider {
 
 	private final GitHubProperties properties;

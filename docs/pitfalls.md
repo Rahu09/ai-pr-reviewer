@@ -103,6 +103,9 @@ This stack is **newer than most AI assistants' training data**. Code written "fr
 | A `ping` delivery right after creating the App | Normal → return 200 |
 | `npx` not found | smee needs **Node.js LTS**: `npx smee-client --url <channel> --target http://localhost:8080/webhooks/github` |
 | Strangers' fork PRs trigger reviews | The demo repo is public → review **only same-repo branches by allowlisted authors** (ADR-0019) |
+| "Redeliver" in GitHub's App settings does not retry a lost review | A redelivery has the same delivery id, and dedupe by delivery id (correctly) ignores it → push a commit or close and reopen the PR to get a new delivery |
+| Tests for an HMAC with an unset secret throw "Empty key" | `Mac.init` refuses an empty `SecretKeySpec` → reject a blank secret before computing anything, and don't sign with an empty key in tests |
+| `MockRestServiceServer`: "Cannot add more expectations after actual requests are made" | Expectations are fixed at the first request → declare them all up front (they are matched in order) |
 | Retry after a timeout would post a second review | GitHub accepted the first one but we never stored its id → identify our review by the hidden marker in its body (`sha` + `config`), listing the PR's reviews before every create (Chunk 7) |
 | A model-written finding pings someone or fakes our marker | The model read untrusted PR text and its output goes into a Markdown body → put a zero-width space after `@` and turn `<!--` into `&lt;!--` before posting |
 | Review body rejected as too long | 65,536 character limit → cut the content (60,000 for the summary, 4,000 per inline comment) **before** appending the footer, so the marker is never cut off |

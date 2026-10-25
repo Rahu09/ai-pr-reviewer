@@ -1,6 +1,6 @@
 package io.github.rahu09.prreviewer.github;
 
-/** Supplies the bearer token for GitHub calls. A PAT now (ADR-0010); a GitHub App installation token in Chunk 11. */
+/** Supplies the bearer token for GitHub calls: a PAT, or a GitHub App installation token (ADR-0010). */
 public interface GitHubTokenProvider {
 
 	/** @throws GitHubException if no token is configured */

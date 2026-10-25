@@ -67,6 +67,14 @@ public class InMemoryReviewRunRepository implements ReviewRunRepository {
 		superseded.add(runId);
 	}
 
+	/** What the daily cap sees as "runs started today". */
+	public long runsToday = 0;
+
+	@Override
+	public long countStartedSince(io.github.rahu09.prreviewer.review.model.RunSource source, Instant since) {
+		return runsToday;
+	}
+
 	@Override
 	public Optional<ReviewRun> findRun(UUID id) {
 		return Optional.ofNullable(seededRuns.get(id));

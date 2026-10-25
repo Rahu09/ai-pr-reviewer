@@ -6,7 +6,7 @@ Package root: `backend/src/main/java/io/github/rahu09/prreviewer/`. Tests mirror
 
 | Step | What happens | Where |
 |---|---|---|
-| 1. Request | Dry-run HTTP endpoints (`/diff`, `/fixture/{id}`, `/pr`) and `GET /api/runs/{id}` | `review/api/` |
+| 1. Request | Dry-run HTTP endpoints (`/diff`, `/fixture/{id}`, `/pr`) and `GET /api/runs/{id}`; or a GitHub webhook (`POST /webhooks/github`: signature, trust filter, dedupe, then the same engine) | `review/api/`, `webhook/` |
 | 2. Input | A fixture folder, or a PR frozen from GitHub (SHAs, diff, changed files at head) | `review/fixture/`, `github/` (`GitHubSnapshotProvider`) |
 | 3. Engine | Orchestrates all steps and records the run | `review/ReviewOrchestrator` |
 | 4. Diff to locations | Parse the unified diff | `context/` (`DiffParser`, `FileDiff`, `DiffLine`) |
@@ -30,7 +30,8 @@ Package root: `backend/src/main/java/io/github/rahu09/prreviewer/`. Tests mirror
 | `github/` | Token provider, `GitHubClient` (reads, and create-review), DTOs, snapshot provider | `review`, `context` |
 | `publishing/` | `FindingValidator`, `ValidationResult`, `ReviewPublisher`, `ReviewSummaryFormatter`, sealed `PublishOutcome` | `context`, `review/model`, `review/run`, `github` |
 | `ai/` | `SpringAiReviewGenerator` | `review` |
-| `knowledge/`, `messaging/`, `webhook/` | Empty until Chunks 8, 12 and 11 | |
+| `webhook/` | `GitHubWebhookController`, `SignatureVerifier`, sealed `WebhookPayload`, `WebhookService`, delivery repository, temporary `InProcessReviewStarter` | `review`, `github`, `publishing` |
+| `knowledge/`, `messaging/` | Empty until Chunks 8 and 12 | |
 
 ## Folder rules
 

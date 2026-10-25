@@ -33,6 +33,9 @@ public interface ReviewRunRepository {
 	/** The PR moved on (closed, or a new head commit) before anything was posted. */
 	void markSuperseded(UUID runId);
 
+	/** How many runs of this source started at or after {@code since}: the daily cap counts these (ADR-0019). */
+	long countStartedSince(RunSource source, Instant since);
+
 	Optional<ReviewRun> findRun(UUID id);
 
 	List<StoredFinding> findFindings(UUID runId);
