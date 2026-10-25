@@ -1,7 +1,7 @@
 # Chunk 02 — Demo repo, guidelines, first fixtures (lite, Sprint 1)
 
 - **Dates built:** 2026-10-12  · **Date studied:** —
-- **Status:** In progress (waiting for the owner to push `order-service-demo` and open the 2 PRs)
+- **Status:** Built
 - **Tag:** chunk-02-lite
 
 ## Goal
@@ -37,11 +37,10 @@ In this repo:
 ## How it was verified
 - `./mvnw verify` green on `main` and on all 4 branches (JDK 25).
 - Fixture line numbers re-checked with `sed -n <line>p` against the head files.
-- [ ] pushed (owner) · [ ] 2 PRs open (owner)
+- [x] pushed (owner) · [x] 2 PRs open: order-service-demo#1 (list-orders-unpaginated), #2 (cancel-order-swallowed)
 
 ## Deviations from the plan
 - None. (Demo repo has 12 classes rather than "about 8"; still small.)
 
 ## Next
-- Owner: create the GitHub repo `order-service-demo`, push `main` and the 4 branches, open PRs for the two `feature/*` branches.
-- Then Chunk 3 (first LLM call).
+- Chunk 3 done. The 2 open PRs are used by Chunks 6-7.

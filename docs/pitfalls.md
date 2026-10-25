@@ -36,6 +36,8 @@ This stack is **newer than most AI assistants' training data**. Code written "fr
 | Testcontainers can't reach Docker or reports an API-version error | Docker Desktop isn't running, or Testcontainers is too old for the Docker engine → start Docker and use Boot's latest managed Testcontainers |
 | Containers get killed or tests hang in Sprint 3 | WSL 2 memory too low → give Docker ≥ 6 GB in `%UserProfile%\.wslconfig` |
 | `docker compose up` works but the app says password authentication failed after you changed `POSTGRES_PASSWORD` | The Postgres image applies the password only when the data volume is first created → `docker compose down -v` (deletes only local dev data) and start again |
+| A Python/sed script that edits Java turns `
+` inside a string literal into a real newline ("unclosed string literal") | The escape is interpreted by the script → edit Java with the editor tool, or double-escape on purpose |
 | A long Git Bash heredoc containing Java text blocks fails with `unexpected EOF while looking for matching` | Bash parses the whole command first → create such files with the editor/Write tool, not a shell heredoc |
 | `java -version` still shows 18 after setting the user `JAVA_HOME` | The machine `Path` lists `C:\Program Files\Common Files\Oracle\Java\javapath` before user entries → remove it from the system `Path` (admin) or rely on `JAVA_HOME` (`mvnw`, IntelliJ use it) |
 | Constant permission prompts in Claude Code | Choose **Always allow** for `./mvnw`, `docker compose`, `git status/diff/add/commit`. **Never** for `git push` |
@@ -81,6 +83,9 @@ This stack is **newer than most AI assistants' training data**. Code written "fr
 | `column "config" is of type jsonb but expression is of type character varying` | JDBC sends text → `CAST(:config AS jsonb)` in the SQL |
 | Timestamps shift by hours | Mixed types → use `timestamptz` columns ↔ `Instant` in records |
 | `uuid` comparison errors | Use `uuid` columns ↔ `UUID` |
+| `Can't infer the SQL type` binding an `Instant` | The PostgreSQL driver does not take `Instant` → bind `OffsetDateTime.ofInstant(i, ZoneOffset.UTC)` and read with `rs.getObject(col, OffsetDateTime.class).toInstant()` |
+| A failed review leaves no trace, or a run exists without findings | The whole review ran inside one transaction, or the run was only written at the end → insert the `RUNNING` row in its own commit, call the LLM outside any transaction, then update the run and insert the findings in ONE `@Transactional` method |
+| Mapping a record with a `jsonb` column and nullable ints | Auto-mapping can't build nested records from jsonb → use a `RowMapper` with `JsonMapper` for the jsonb columns and `rs.wasNull()` for nullable numbers |
 
 ## 6. GitHub (Chunks 6, 7, 11)
 

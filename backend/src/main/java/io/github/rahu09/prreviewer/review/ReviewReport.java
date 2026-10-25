@@ -6,9 +6,11 @@ import io.github.rahu09.prreviewer.publishing.ValidationResult.Publishable;
 import io.github.rahu09.prreviewer.publishing.ValidationResult.SummaryOnly;
 import io.github.rahu09.prreviewer.publishing.ValidationResult.Suppressed;
 import java.util.List;
+import java.util.UUID;
 
 /** The JSON a dry run returns (and the Python evaluation will read later): every finding with its status and reason. */
 public record ReviewReport(
+		UUID runId,
 		String provider,
 		String model,
 		String promptVersion,
@@ -36,7 +38,7 @@ public record ReviewReport(
 
 	public static ReviewReport from(ReviewOutcome outcome, FixtureMeta expected) {
 		GenerationResult g = outcome.generation();
-		return new ReviewReport(g.provider(), g.model(), g.promptVersion(), g.inputTokens(), g.outputTokens(),
+		return new ReviewReport(outcome.runId(), g.provider(), g.model(), g.promptVersion(), g.inputTokens(), g.outputTokens(),
 				outcome.allowedLocations(), outcome.filesReviewed(), outcome.filesSkipped(),
 				outcome.results().stream().map(ReviewReport::view).toList(), expected);
 	}

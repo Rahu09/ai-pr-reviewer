@@ -384,11 +384,11 @@ Sizes are **learning-mode** estimates: **S** ≈ 1–2 sessions, **M** ≈ 3–5
 |---|---|---|---|---|---|---|
 | 0 | Setup and decision log | S | 1 | | ✅ [journal](docs/chunks/00-setup.md) | ⬜ |
 | 1 | Spring Boot skeleton + Postgres + CI | S | 1 | | ✅ [journal](docs/chunks/01-skeleton.md) | ⬜ |
-| 2 | Demo repo, guidelines, first fixtures (lite in Sprint 1) | M | 1 | | 🟨 [journal](docs/chunks/02-demo-repo-lite.md) (PRs pending) | ⬜ |
+| 2 | Demo repo, guidelines, first fixtures (lite in Sprint 1) | M | 1 | | ✅ [journal](docs/chunks/02-demo-repo-lite.md) | ⬜ |
 | 3 | First LLM call → structured findings | M | 1 | | ✅ [journal](docs/chunks/03-first-llm-call.md) | ⬜ |
 | 4 | Diff parsing, allowed locations, validation ★ | L | 1 | | ✅ [journal](docs/chunks/04-diff-parsing.md) | ⬜ |
-| 5 | Persist runs and findings | M | 1 | | ⬜ | ⬜ |
-| 6 | Review a real PR (GitHub read, dry-run) | M | 1 | | ⬜ | ⬜ |
+| 5 | Persist runs and findings | M | 1 | | ✅ [journal](docs/chunks/05-persist-runs.md) | ⬜ |
+| 6 | Review a real PR (GitHub read, dry-run) | M | 1 | | ✅ [journal](docs/chunks/06-github-read.md) | ⬜ |
 | 7 | Publish a review (manual trigger) | M | 1 | **v0.1 Demoable** | ⬜ | ⬜ |
 | 11 | GitHub App + webhook receiver ★ (in-process trigger until Sprint 3) | M | 1 | **v0.1 Automatic** | ⬜ | ⬜ |
 | 8 | Guideline RAG (similarity) | L | 2 | | ⬜ | ⬜ |
@@ -781,10 +781,10 @@ Every card has a **Modern Java** line saying which language features that chunk 
 This is mirrored in [CLAUDE.md](CLAUDE.md) so coding assistants pick it up automatically. Since v4 there are **two modes** → [ADR-0017](docs/decisions/0017-fast-track-build-sprints-then-study.md).
 
 ### 10.1 Build mode (sprints): get it working fast
-1. **The assistant implements whole chunks** in the sprint's order, without waiting for approval after every small step. It still works in small, logical commits and runs the tests after each.
+1. **The assistant implements whole chunks** in the sprint's order, without waiting for approval after every small step. It works in small logical steps and runs the tests after each; it does not commit (see item 4).
 2. **Stop at every chunk boundary** with a 5-line summary: what was built, how it was verified, anything surprising. You say "go" for the next chunk (or ask questions).
 3. **Tests are part of "done".** Every chunk's "Done when" checks must pass, including its "Failure to test". Fast doesn't mean unverified.
-4. **Commits:** the assistant may make **local** commits (one per logical step, clear messages). **You push.** Nobody force-pushes or rewrites history.
+4. **Commits:** the assistant **never commits or pushes**. It leaves changes in the working tree and, at each logical step or chunk boundary, suggests a commit message. **You commit and push.** Nobody force-pushes or rewrites history.
 5. **Docs during the build:** the assistant writes the chunk journal's build sections (What I built, Decisions, Problems, How I verified), any ADRs, and the CHANGELOG entry, and ticks **Built** in the §9 table.
 6. **You do the parts only you can:** installs, accounts, API keys into `.env`, creating the PAT and the GitHub App in GitHub's UI, and pushing.
 

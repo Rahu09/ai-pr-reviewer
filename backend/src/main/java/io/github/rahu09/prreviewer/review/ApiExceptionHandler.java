@@ -1,6 +1,7 @@
 package io.github.rahu09.prreviewer.review;
 
 import io.github.rahu09.prreviewer.context.DiffParseException;
+import io.github.rahu09.prreviewer.github.GitHubException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(DiffParseException.class)
 	ProblemDetail invalidDiff(DiffParseException e) {
 		return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid diff: " + e.getMessage());
+	}
+
+	@ExceptionHandler(GitHubException.class)
+	ProblemDetail githubFailed(GitHubException e) {
+		log.warn("GitHub call failed: {}", e.getMessage());
+		HttpStatus status = e.status() == 404 ? HttpStatus.NOT_FOUND : HttpStatus.BAD_GATEWAY;
+		return ProblemDetail.forStatusAndDetail(status, e.getMessage());
+	}
+
+	@ExceptionHandler(RunNotFoundException.class)
+	ProblemDetail runNotFound(RunNotFoundException e) {
+		return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
 	}
 
 	@ExceptionHandler(FixtureNotFoundException.class)

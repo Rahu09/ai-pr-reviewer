@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import io.github.rahu09.prreviewer.github.GitHubSnapshotProvider;
 import io.github.rahu09.prreviewer.publishing.FindingValidator;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -18,9 +19,11 @@ class DryRunControllerTest {
 
 	private final FixtureLoader fixtures = new FixtureLoader(new FixtureProperties("../evaluation/datasets"), JsonMapper.builder().build());
 
+	private final GitHubSnapshotProvider github = org.mockito.Mockito.mock(GitHubSnapshotProvider.class);
+
 	private MockMvc mvc(ReviewGenerator generator) {
-		var orchestrator = new ReviewOrchestrator(generator, new FindingValidator(), new ReviewLimits(10, 400, 5, 50, 60_000));
-		return MockMvcBuilders.standaloneSetup(new DryRunController(orchestrator, fixtures))
+		var orchestrator = new ReviewOrchestrator(generator, new FindingValidator(), new ReviewLimits(10, 400, 5, 50, 60_000), new InMemoryReviewRunRepository());
+		return MockMvcBuilders.standaloneSetup(new DryRunController(orchestrator, fixtures, github))
 				.setControllerAdvice(new ApiExceptionHandler())
 				.build();
 	}
@@ -71,6 +74,34 @@ class DryRunControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.filesReviewed.length()").value(2))
 				.andExpect(jsonPath("$.filesSkipped[0].reason").value("TOO_MANY_FILES"));
+	}
+
+	@Test
+	void prEndpointFetchesTheSnapshotAndReturnsTheRunId() throws Exception {
+		var snapshot = fixtures.load("list-orders-unpaginated").snapshot();
+		org.mockito.Mockito.when(github.fetch("Rahu09", "order-service-demo", 1)).thenReturn(snapshot);
+
+		mvc(answering()).perform(post("/api/dry-run/pr").contentType(MediaType.APPLICATION_JSON)
+				.content("{\"owner\":\"Rahu09\",\"repo\":\"order-service-demo\",\"number\":1}"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.runId").exists())
+				.andExpect(jsonPath("$.filesReviewed.length()").value(5));
+	}
+
+	@Test
+	void prEndpointRejectsBadOwnerAndNumberAndMapsGitHubNotFoundTo404() throws Exception {
+		MockMvc mvc = mvc(answering());
+		mvc.perform(post("/api/dry-run/pr").contentType(MediaType.APPLICATION_JSON)
+				.content("{\"owner\":\"../x\",\"repo\":\"r\",\"number\":1}")).andExpect(status().isBadRequest());
+		mvc.perform(post("/api/dry-run/pr").contentType(MediaType.APPLICATION_JSON)
+				.content("{\"owner\":\"o\",\"repo\":\"r\",\"number\":0}")).andExpect(status().isBadRequest());
+
+		org.mockito.Mockito.when(github.fetch("o", "r", 9))
+				.thenThrow(new io.github.rahu09.prreviewer.github.GitHubException("GitHub 404 for pull request o/r#9: not found", 404, null));
+		mvc.perform(post("/api/dry-run/pr").contentType(MediaType.APPLICATION_JSON)
+				.content("{\"owner\":\"o\",\"repo\":\"r\",\"number\":9}"))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("not found")));
 	}
 
 	@Test

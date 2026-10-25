@@ -24,7 +24,7 @@ The kickoff message says **build mode** or **study mode**. If it doesn't, ask.
 - Implement whole chunks in the sprint order from PLAN §9.0. Don't wait for approval after every small step.
 - **Stop at each chunk boundary** with a 5-line summary (what was built, how it was verified, anything surprising) and wait for "go".
 - **Tests are part of done.** Every "Done when" check and "Failure to test" must pass before moving on. Cut scope, never tests.
-- Make **local commits** (one per logical step, clear conventional messages). **Never push**, force-push or rewrite history. The owner pushes.
+- **Never run `git commit`, `git push`, `git reset`, `git revert`, `git rebase` or `git stash`, and never rewrite history.** The owner makes every commit and every push. Leave changes uncommitted in the working tree. When a step is a good commit point (a chunk boundary, or a green logical step), say so and suggest a commit message, and the owner commits. Read-only git (`status`, `diff`, `log`) is fine. If a git operation is half-finished (merge, revert, rebase), do not touch it: report it.
 - Write the journal's build sections, any ADRs and the CHANGELOG entry, and tick **Built** in PLAN §9.1.
 - Hand the owner anything only they can do: installs, accounts, putting API keys into `.env`, creating the PAT and the GitHub App, pushing. Give exact click-by-click steps.
 

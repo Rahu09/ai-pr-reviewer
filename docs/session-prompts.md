@@ -14,7 +14,7 @@ This is a living file: if the plan changes, update the prompts here too.
 | **One new session per build day** | Don't run a whole sprint in one session, because long sessions get compacted and lose detail. |
 | **One new session per study chunk** | Never mix build and study in one session. |
 | **Also start fresh** (at a chunk boundary) when… | the session says it's compacting the conversation, it starts forgetting earlier details or repeating a fixed mistake, or you've come out of a long debugging detour or a long break. |
-| **Permission mode** | Build sessions: **Accept edits**. Study sessions: **default**. Never bypass. When prompted, choose **Always allow** for `./mvnw`, `docker compose` and `git status/diff/add/commit`, but **never** for `git push`. |
+| **Permission mode** | Build sessions: **Accept edits**. Study sessions: **default**. Never bypass. When prompted, choose **Always allow** for `./mvnw`, `docker compose` and `git status/diff/log`, but **never** for `git add/commit/push`: the assistant does not commit (CLAUDE.md), you do. |
 | **Folder** | Start sessions in `E:\production\ai-pr-reviewer`. On days that touch the demo repo (1 and 3), add `E:\production\order-service-demo` as a second folder. |
 | **Pitfalls first** | Each prompt tells Claude to read the relevant [pitfalls.md](pitfalls.md) sections before coding. |
 | **Before closing any session** | Make sure the current chunk's journal is up to date: either `Status: Built`, or `Status: In progress` with a clear **Next** step. The prompt at the bottom does this for you. |
