@@ -18,7 +18,7 @@ This stack is **newer than most AI assistants' training data**. Code written "fr
 | **Testcontainers 2** | Artifacts are now `testcontainers-<module>` (e.g. `testcontainers-postgresql`), and some packages moved | Use the versions Boot manages and fix imports from the actual jar. `pgvector/pgvector` works directly as a `PostgreSQLContainer` image |
 | **Spring AI 2.0** | Starters are `spring-ai-starter-model-*`; each model type is selected by `spring.ai.model.chat`, `spring.ai.model.embedding`, … | See §3 and ADR-0018 |
 | **Spring Kafka 4** | Its JSON (de)serializers are tied to the Jackson version | We avoid them: String payloads plus our own `JsonMapper` (§9) |
-| **Java 25** | JNI libraries (the ONNX runtime) print "restricted method" warnings | Add `--enable-native-access=ALL-UNNAMED` (Chunk 8, Dockerfile) |
+| **Java 25** | JNI libraries print "restricted method in java.lang.System has been called" warnings: Netty (via the AI client) already does at startup, the ONNX runtime will too | Harmless. Silence with `--enable-native-access=ALL-UNNAMED` (IntelliJ VM options, Dockerfile in Chunk 14) |
 
 **When the compiler rejects an API, check the reference docs or the dependency's sources, not memory, and add the finding to this file.**
 

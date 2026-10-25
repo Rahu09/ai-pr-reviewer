@@ -1,7 +1,7 @@
 # Chunk 11 — GitHub App + webhook receiver ★
 
 - **Dates built:** 2026-10-26  · **Date studied:** —
-- **Status:** Built (code and tests done; the live run needs the GitHub App created by the owner, see Next)
+- **Status:** Built (live run confirmed: App-authored review from a real webhook, redelivery ignored; only revoking the PAT is left, an owner step)
 - **Tag:** chunk-11
 
 ## Goal
@@ -40,8 +40,13 @@ A GitHub App (own bot identity, installation tokens) and a public `POST /webhook
   - `WebhookEndToEndTest` (3, Spring + Postgres): **a redelivery creates no second row and no second review** (the starter is notified exactly once, after commit), bad signature → 401 and no row, fork PR stored as `IGNORED_UNTRUSTED`.
   - `AppInstallationTokenProviderTest` (7, throwaway RSA key): the JWT's signature verifies with the public key and has the right claims, token cached until 5 min before expiry then refreshed, single installation found automatically, several installations need an explicit ID, 401 → clear message, PKCS#1 key refused with the fix, missing key file, non-numeric App ID.
   - `InProcessReviewStarterTest` (3): fetch happens inside the recorded run, then publish; failures are contained.
-- "Done when": [x] bad signature → 401 (test) [x] redelivery creates no duplicate (test, real Postgres) [ ] a real PR event reaches the local app (live, needs the App, see Next).
-- Not done from here: nothing was sent to or received from GitHub. Creating the App, the smee channel and the keys are owner steps.
+- "Done when": [x] bad signature → 401 (test) [x] redelivery creates no duplicate (test, real Postgres) [x] a real PR event reaches the local app and the bot posts a review (live, see below).
+- **Live run (2026-10-26, owner, via smee.io):**
+  - [x] An empty commit pushed to PR #1's branch produced a `pull_request.synchronize` delivery. The app logged `WebhookService ... ACCEPTED`, Gemini returned 1 finding (2065 in / 184 out tokens), and `InProcessReviewStarter` logged `Posted[reviewId=5644967215, inlineComments=1, summaryOnly=false]`.
+  - [x] The review on PR #1 was posted by `rahu09-pr-reviewer[bot]` at `OrderController.java` line 32, next to the earlier PAT review by the owner (Chunk 7). The App token path works.
+  - [x] Redelivering that delivery id from the App's *Recent deliveries* created no second review (PR #1 still shows one bot comment).
+  - [x] The app log showed `Delivery 2a5a3d80... was already handled: ignoring the redelivery` (reported by the owner). GitHub's response pane only shows smee.io's empty 200 (the delivery goes to smee, not to the app), so `DUPLICATE` is visible only in the app log.
+- Not done: revoking the PAT (ADR-0010) is the owner's step.
 
 ## Deviations from the plan
 - **The plan's recovery claim is wrong:** PLAN says a crash mid-review is recovered by "redelivering from GitHub's UI". With the dedupe the same card requires, a redelivery has the same delivery id and is ignored (`DUPLICATE`). A lost review is recovered by pushing a commit or closing and reopening the PR (a new delivery). The class comment says so; PLAN's wording on the Chunk 11 card is left for the owner to confirm. Chunk 12's outbox is the real fix.
@@ -68,6 +73,6 @@ A GitHub App (own bot identity, installation tokens) and a public `POST /webhook
    and set `.env`: `GITHUB_APP_PRIVATE_KEY_PATH=E:/production/secrets/app-pkcs8.pem` (forward slashes, no quotes).
 5. **Install it only on the demo repo:** the App's left menu → *Install App* → *Install* next to your account → *Only select repositories* → `order-service-demo` → *Install*.
 6. **Run:** terminal 1 `docker compose up -d` then `cd backend && ./mvnw spring-boot:run` (the log must say `GitHub auth: App ...`). Terminal 2 `npx smee-client --url <channel URL> --target http://localhost:8080/webhooks/github`.
-7. **Live check:** on a branch of a demo PR push an empty commit (`git commit --allow-empty -m "trigger review"` then push). Expect: smee prints the delivery, the app logs `ACCEPTED` and then a review under the **bot's name** appears on the PR. In the App's *Advanced* → *Recent deliveries* the response should be 200.
-8. **Redelivery check:** in *Recent deliveries* click *Redeliver* on that delivery. Expect response `{"outcome":"DUPLICATE"}` and no second review.
+7. **Live check:** on a branch of a demo PR push an empty commit (`git commit --allow-empty -m "trigger review"` then push). Expect: smee prints the delivery, the app logs `ACCEPTED` and then a review under the **bot's name** appears on the PR. In the App's *Advanced* → *Recent deliveries* the response should be 200 (it is smee's empty 200, not the app's JSON).
+8. **Redelivery check:** in *Recent deliveries* click *Redeliver* on that delivery. Expect no second review, and the app log line `Delivery ... was already handled: ignoring the redelivery`.
 9. When it works, **revoke the PAT** (ADR-0010) and empty `GITHUB_PAT` in `.env`.
