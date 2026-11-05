@@ -18,8 +18,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 /**
  * TEMPORARY (Sprint 1, ADR-0017): runs fetch → review → publish on a virtual thread right after the delivery commits.
  * Not durable: if the app dies mid-review that review is lost. A GitHub "Redeliver" does NOT recover it (same delivery
- * id, so it is a duplicate); push a commit or reopen the PR instead. Chunk 12 adds the outbox and Kafka alongside this
- * class and Chunk 13 deletes it.
+ * id, so it is a duplicate); push a commit or reopen the PR instead. Chunk 12 adds the Postgres review queue alongside
+ * this class and Chunk 13 (the worker) deletes it (ADR-0021).
  */
 @Component
 public class InProcessReviewStarter {

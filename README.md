@@ -4,7 +4,7 @@ A GitHub App written in **Java 25 + Spring Boot 4** that reviews small Java pull
 
 > Personal portfolio project, built with AI assistance. Every design decision was recorded with its alternatives and trade-offs as it was made.
 
-**Status: Sprint 1 done (v0.1).** Opening or updating a PR in the demo repo makes the bot post a review automatically. Retrieval from engineering guidelines, relevance ranking, evaluation numbers, Kafka and deployment are **planned, not built yet** (see [Roadmap](#roadmap)).
+**Status: Sprint 1 done (v0.1).** Opening or updating a PR in the demo repo makes the bot post a review automatically. Retrieval from engineering guidelines, relevance ranking, evaluation numbers, a durable Postgres job queue and deployment are **planned, not built yet** (see [Roadmap](#roadmap)).
 
 ## What it looks like
 
@@ -90,7 +90,8 @@ Java 25, Spring Boot 4, Spring Framework 7, Jackson 3, Spring AI 2 (Gemini or Op
 |---|---|---|
 | Sprint 1 | Engine, GitHub read, publish, GitHub App + webhook, trusted-PR filter | **Done** |
 | Sprint 2 | Guideline RAG (pgvector), Jev relevance ranking, first measured A/B/C results | Planned |
-| Sprint 3 | Kafka with a transactional outbox, idempotent consumer, retries and a dead-letter topic (replaces today's in-process trigger) | Planned |
+| Sprint 3 | Durable review queue in PostgreSQL: a `SKIP LOCKED` worker with retries, failure handling and crash recovery (replaces today's in-process trigger). No message broker: at this volume the queue is never the bottleneck, and Postgres already holds the state | Planned |
 | Sprint 4 | Deployment with CI/CD, demo video, evaluation report | Planned |
+| After v1.0 | Production readiness for a multi-team deployment: security and data-governance sign-off, per-installation tokens, no repeated findings across pushes, a reconciliation sweeper for missed webhooks, observability and cost controls | Backlog |
 
 **Known limits today:** the in-process review trigger is not durable (a crash mid-review loses that review; push a commit or reopen the PR to get another), and the daily cap can be overshot by a few reviews under a burst. Sprint 3 removes both.

@@ -1,5 +1,5 @@
 # Local infrastructure. Host ports avoid clashes with other projects (pitfalls §1).
-# Kafka is added in Chunk 12.
+# Postgres is the only infrastructure: the review queue lives in it too (ADR-0021).
 services:
   postgres:
     image: pgvector/pgvector:pg17
